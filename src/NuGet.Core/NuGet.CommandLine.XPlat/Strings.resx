@@ -761,4 +761,10 @@ Non-HTTPS access will be removed in a future version. Consider migrating to 'HTT
     <value>Invalid culture identifier in {0} environment variable. Value read is '{1}'</value>
     <comment>0 - Environment variable name, 1 - value set in environment variable</comment>
   </data>
+  <data name="ListPkg_OutputFormatDescription" xml:space="preserve">
+    <value>Set the report output format.</value>
+  </data>
+  <data name="ListPkg_OutputVersionDescription" xml:space="preserve">
+    <value>The version of report output.</value>
+  </data>
 </root>
