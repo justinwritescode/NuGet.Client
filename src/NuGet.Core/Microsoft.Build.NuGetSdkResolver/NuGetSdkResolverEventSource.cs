@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.Diagnostics.Tracing;
+using System.IO;
 using System.Threading.Tasks;
 using NuGet.Common;
 
@@ -16,7 +17,7 @@ namespace Microsoft.Build.NuGetSdkResolver
         /// <summary>
         ///  The current version of events.  If any method signature is changed, you must increment this.
         /// </summary>
-        public const int EventVersion = 21;
+        public const int EventVersion = 23;
 
         private NuGetSdkResolverEventSource()
         {
@@ -157,6 +158,24 @@ namespace Microsoft.Build.NuGetSdkResolver
             WriteEvent(EventId.WaitForRestoreSemaphoreStop, id, originalVersion);
         }
 
+        [Event(EventId.SettingsFileRead, Keywords = Keywords.All, Version = EventVersion)]
+        internal void SettingsFileRead(string path)
+        {
+            WriteEvent(EventId.SettingsFileRead, path);
+        }
+
+        [Event(EventId.LoadSettingsStart, Keywords = Keywords.All, Version = EventVersion)]
+        internal void LoadSettingsStart()
+        {
+            WriteEvent(EventId.LoadSettingsStart);
+        }
+
+        [Event(EventId.LoadSettingsStop, Keywords = Keywords.All, Version = EventVersion)]
+        internal void LoadSettingsStop()
+        {
+            WriteEvent(EventId.LoadSettingsStop);
+        }
+
         private static class EventId
         {
             public const int GetResultStart = 1;
@@ -170,6 +189,9 @@ namespace Microsoft.Build.NuGetSdkResolver
             public const int RestorePackageStop = 9;
             public const int WaitForRestoreSemaphoreStart = 10;
             public const int WaitForRestoreSemaphoreStop = 11;
+            public const int SettingsFileRead = 12;
+            public const int LoadSettingsStart = 13;
+            public const int LoadSettingsStop = 14;
         }
 
         public static class Keywords

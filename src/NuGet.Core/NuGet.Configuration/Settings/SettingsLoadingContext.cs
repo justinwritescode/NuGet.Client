@@ -16,6 +16,8 @@ namespace NuGet.Configuration
         private readonly SemaphoreSlim _semaphore;
         private bool _isDisposed;
 
+        public event EventHandler<string> FileRead;
+
         public SettingsLoadingContext()
         {
             _semaphore = new SemaphoreSlim(initialCount: 1, maxCount: 1);
@@ -47,7 +49,12 @@ namespace NuGet.Configuration
                 }
 
                 var file = new FileInfo(filePath);
-                settingsFile = new Lazy<SettingsFile>(() => new SettingsFile(file.DirectoryName, file.Name, isMachineWide, isReadOnly));
+                settingsFile = new Lazy<SettingsFile>(() =>
+                {
+                    OnFileRead(file.FullName);
+
+                    return new SettingsFile(file.DirectoryName, file.Name, isMachineWide, isReadOnly);
+                });
                 _settingsFiles.Add(settingsFile);
             }
             finally
@@ -70,6 +77,17 @@ namespace NuGet.Configuration
             GC.SuppressFinalize(this);
 
             _isDisposed = true;
+        }
+
+        /// <summary>
+        /// Fires the <see cref="FileRead" /> event for the specified file.
+        /// </summary>
+        /// <param name="filePath">The full path to file that was read.</param>
+        private void OnFileRead(string filePath)
+        {
+            EventHandler<string> fileReadEventHandler = FileRead;
+
+            fileReadEventHandler?.Invoke(this, filePath);
         }
     }
 }
