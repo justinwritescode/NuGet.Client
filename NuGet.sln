@@ -11,7 +11,26 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4A4623E9-CE1F-4DF2-A4C2-513CE8377D2A}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		.gitmodules = .gitmodules
+		.vsconfig = .vsconfig
+		build.cmd = build.cmd
+		build.ps1 = build.ps1
+		build.sh = build.sh
+		configure.cmd = configure.cmd
+		configure.ps1 = configure.ps1
+		CONTRIBUTING.md = CONTRIBUTING.md
+		Directory.Build.props = Directory.Build.props
+		Directory.Build.rsp = Directory.Build.rsp
+		Directory.Build.targets = Directory.Build.targets
+		global.json = global.json
+		NuGet.Config = NuGet.Config
 		build\NuGet.ruleset = build\NuGet.ruleset
+		README.md = README.md
+		runTests.cmd = runTests.cmd
+		runTests.ps1 = runTests.ps1
+		SECURITY.md = SECURITY.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet.Core.UnitTests", "NuGet.Core.UnitTests", "{7323F93B-D141-4001-BB9E-7AF14031143E}"
@@ -303,6 +322,40 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "funcTests", "funcTests", "{4B35F4D8-A967-40ED-AFA0-CD3AE3DAD77E}"
 	ProjectSection(SolutionItems) = preProject
 		scripts\funcTests\runFuncTests.sh = scripts\funcTests\runFuncTests.sh
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{9B46444F-2AA3-40C7-9FA4-7CD84DB43607}"
+	ProjectSection(SolutionItems) = preProject
+		build\BannedSymbols.txt = build\BannedSymbols.txt
+		build\bootstrap.proj = build\bootstrap.proj
+		build\build.proj = build\build.proj
+		build\common.legacy.props = build\common.legacy.props
+		build\common.project.props = build\common.project.props
+		build\common.props = build\common.props
+		build\common.ps1 = build\common.ps1
+		build\common.targets = build\common.targets
+		build\common.test.props = build\common.test.props
+		build\config.props = build\config.props
+		build\docs.proj = build\docs.proj
+		build\ignorecodesign.csv = build\ignorecodesign.csv
+		build\loc.proj = build\loc.proj
+		build\NuGet.ruleset = build\NuGet.ruleset
+		build\NuGet.Tests.ruleset = build\NuGet.Tests.ruleset
+		build\OptProfV2.props = build\OptProfV2.props
+		build\packages.targets = build\packages.targets
+		build\publish.proj = build\publish.proj
+		build\restorehelper.targets = build\restorehelper.targets
+		build\runsettings.proj = build\runsettings.proj
+		build\sign.proj = build\sign.proj
+		build\sign.targets = build\sign.targets
+		build\symbols.proj = build\symbols.proj
+		build\template.runsettingsproj = build\template.runsettingsproj
+		build\test.targets = build\test.targets
+		build\tests.dev17.vsconfig = build\tests.dev17.vsconfig
+		build\tests.optprof.dev17.vsconfig = build\tests.optprof.dev17.vsconfig
+		build\UpdateNuGetModuleManifest.ps1 = build\UpdateNuGetModuleManifest.ps1
+		build\vsts_build.yaml = build\vsts_build.yaml
+		build\xunit.runsettings = build\xunit.runsettings
 	EndProjectSection
 EndProject
 Global
