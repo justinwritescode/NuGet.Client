@@ -14,7 +14,6 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Text;
-using System.Xml.Linq;
 using Microsoft.Win32;
 using NuGet.Common;
 using NuGet.PackageManagement;
@@ -226,44 +225,27 @@ namespace NuGet.CommandLine
             }
         }
 
-        private void LogToStderr(string message, ConsoleColor fontColor)
-        {
-            System.Console.ForegroundColor = fontColor;
-            System.Console.Error.WriteLine(message);
-            System.Console.ResetColor();
-
-        }
-
         private Assembly CurrentDomain_ResourceResolve(object sender, ResolveEventArgs args)
         {
-            LogToStderr($"****** Requesting resource: {args.Name}; who asks: {args.RequestingAssembly}; sender: {sender}; senderType: {sender?.GetType()}", ConsoleColor.Green);
-
             Assembly returnedResource = null;
-            /*
-            AssemblyName requestedResource = new AssemblyName(args.Name);
-            if (args.RequestingAssembly.GetName().Name.EndsWith(".resources", StringComparison.OrdinalIgnoreCase) && requestedResource.Name.StartsWith("NuGet.CommandLine", StringComparison.OrdinalIgnoreCase) || requestedResource.Name.StartsWith("NuGet.Commands", StringComparison.OrdinalIgnoreCase))
-            {
-                returnedResource = GetNuGetResourcesAssembly(requestedResource.Name, args.RequestingAssembly.GetName().CultureInfo);
-            }
-            */
 
-            if (!args.Name.StartsWith("NuGet.CommandLine", StringComparison.OrdinalIgnoreCase) && args.Name.StartsWith("NuGet", StringComparison.OrdinalIgnoreCase))
+            // We want to intercept NuGet.Resources resources and redirect it to nuget.exe assembly
+            if (!args.Name.StartsWith("NuGet.CommandLine", StringComparison.OrdinalIgnoreCase) && args.Name.StartsWith("NuGet", StringComparison.OrdinalIgnoreCase) && string.Equals("NuGet.Resources", args.RequestingAssembly.GetName().Name, StringComparison.OrdinalIgnoreCase))
             {
                 ManifestResourceInfo resource = NuGetExeAssembly.GetManifestResourceInfo(args.Name);
                 if (resource != null)
                 {
-                    returnedResource = LoadAssemblyFromEmbeddedResources(args.Name);
+                    // Return nuget.exe assembly, since it contains the requested resource by nuget.restources assembly
+                    returnedResource = NuGetExeAssembly;
                 }
             }
 
-            LogToStderr($"++++++ Returned resource: '{returnedResource}'", ConsoleColor.Green);
             return returnedResource;
         }
 
         // This method acts as a binding redirect
         private Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
         {
-            LogToStderr($"****** Requesting assembly: {args.Name}; who asks: {args.RequestingAssembly}; sender: {sender}; senderType: {sender?.GetType()}", ConsoleColor.Red);
             AssemblyName name = new AssemblyName(args.Name);
             Assembly customLoadedAssembly = null;
 
@@ -279,8 +261,6 @@ namespace NuGet.CommandLine
                 // Load satellite resource assembly from embedded resources
                 customLoadedAssembly = GetNuGetResourcesAssembly(name.Name, name.CultureInfo);
             }
-
-            LogToStderr($"+++++++++ Returning assembly: '{customLoadedAssembly}'", ConsoleColor.Red);
 
             return customLoadedAssembly;
         }
