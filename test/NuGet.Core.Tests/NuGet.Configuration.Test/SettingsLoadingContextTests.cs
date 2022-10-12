@@ -84,6 +84,8 @@ namespace NuGet.Configuration.Test
 
             settingsFile2.SaveToDisk();
 
+            File.SetLastWriteTimeUtc(testPathContext.NuGetConfig, DateTime.UtcNow.AddSeconds(2));
+
             SettingsFile settingsFile3 = settingsLoadingContext.GetOrCreateSettingsFile(testPathContext.NuGetConfig);
 
             settingsFile3.ConfigFilePath.Should().Be(testPathContext.NuGetConfig);
