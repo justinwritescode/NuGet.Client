@@ -1,1 +1,5 @@
+NuGet.Common.FileSystemInfoFullNameEqualityComparer
 NuGet.Common.NuGetLogCode.NU5049 = 5049 -> NuGet.Common.NuGetLogCode
+override NuGet.Common.FileSystemInfoFullNameEqualityComparer.Equals(System.IO.FileSystemInfo x, System.IO.FileSystemInfo y) -> bool
+override NuGet.Common.FileSystemInfoFullNameEqualityComparer.GetHashCode(System.IO.FileSystemInfo obj) -> int
+static readonly NuGet.Common.FileSystemInfoFullNameEqualityComparer.Instance -> NuGet.Common.FileSystemInfoFullNameEqualityComparer

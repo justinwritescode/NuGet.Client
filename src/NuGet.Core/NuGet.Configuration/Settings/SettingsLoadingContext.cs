@@ -2,25 +2,45 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
-using System.Globalization;
+using System.Collections.Concurrent;
 using System.IO;
-using System.Threading;
 using NuGet.Common;
 
 namespace NuGet.Configuration
 {
+    /// <summary>
+    /// Represents a cache context when loading <see cref="SettingsFile" /> objects so that they are only read once or if they change on disk.
+    /// </summary>
     public sealed class SettingsLoadingContext : IDisposable
     {
-        private readonly IList<Lazy<SettingsFile>> _settingsFiles = new List<Lazy<SettingsFile>>();
-        private readonly SemaphoreSlim _semaphore;
+        /// <summary>
+        /// A thread-safe cache for files based on their full path and last write time.
+        /// </summary>
+        private readonly ConcurrentDictionary<FileInfo, (DateTime LastWriteTime, Lazy<SettingsFile> Lazy)> _fileCache = new ConcurrentDictionary<FileInfo, (DateTime, Lazy<SettingsFile>)>(FileSystemInfoFullNameEqualityComparer.Instance);
+
         private bool _isDisposed;
 
-        public SettingsLoadingContext()
+        /// <summary>
+        /// Occurs when a file is read.
+        /// </summary>
+        internal event EventHandler<string> FileRead;
+
+        public void Dispose()
         {
-            _semaphore = new SemaphoreSlim(initialCount: 1, maxCount: 1);
+            Dispose(disposing: true);
+
+            GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// Gets or creates a settings file for the specified path.
+        /// </summary>
+        /// <param name="filePath">The file path to create a <see cref="SettingsFile" /> object for.</param>
+        /// <param name="isMachineWide">An optional value indicating whether or not the settings file is machine-wide.</param>
+        /// <param name="isReadOnly">An optional value indicating whether or not the settings file is read-only.</param>
+        /// <returns></returns>
+        /// <exception cref="ObjectDisposedException">When the current object has been disposed.</exception>
+        /// <exception cref="ArgumentNullException">When <paramref name="filePath" /> is <c>null</c>.</exception>
         internal SettingsFile GetOrCreateSettingsFile(string filePath, bool isMachineWide = false, bool isReadOnly = false)
         {
             if (_isDisposed)
@@ -30,46 +50,48 @@ namespace NuGet.Configuration
 
             if (filePath == null)
             {
-                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Resources.Argument_Cannot_Be_Null_Or_Empty, nameof(filePath)));
+                throw new ArgumentNullException(nameof(filePath));
             }
 
-            _semaphore.Wait();
-            Lazy<SettingsFile> settingsFile = null;
+            var fileInfo = new FileInfo(filePath);
 
-            try
-            {
-                for (int i = 0; i < _settingsFiles.Count; i++)
+            // Add a new file to the cache if it doesn't exist.  If the file is already in the cache, read it again if the file has changed
+            (DateTime _, Lazy<SettingsFile> Lazy) = _fileCache.AddOrUpdate(
+                fileInfo,
+                key => (key.LastWriteTime, new Lazy<SettingsFile>(() => LoadSettingsFile(key, isMachineWide, isReadOnly))),
+                (key, existingItem) =>
                 {
-                    if (PathUtility.GetStringComparerBasedOnOS().Equals(_settingsFiles[i].Value.ConfigFilePath, filePath))
+                    if (existingItem.LastWriteTime < key.LastWriteTime)
                     {
-                        return _settingsFiles[i].Value;
+                        return (key.LastWriteTime, new Lazy<SettingsFile>(() => LoadSettingsFile(key, isMachineWide, isReadOnly)));
                     }
-                }
 
-                var file = new FileInfo(filePath);
-                settingsFile = new Lazy<SettingsFile>(() => new SettingsFile(file.DirectoryName, file.Name, isMachineWide, isReadOnly));
-                _settingsFiles.Add(settingsFile);
-            }
-            finally
+                    return existingItem;
+                });
+
+            SettingsFile settingsFile = Lazy.Value;
+
+            return settingsFile;
+
+            SettingsFile LoadSettingsFile(FileInfo fileInfo, bool isMachineWide, bool isReadOnly)
             {
-                _semaphore.Release();
-            }
+                FileRead?.Invoke(this, filePath);
 
-            return settingsFile?.Value;
+                return new SettingsFile(fileInfo.DirectoryName, fileInfo.Name, isMachineWide, isReadOnly);
+            }
         }
 
-        public void Dispose()
+        private void Dispose(bool disposing)
         {
-            if (_isDisposed)
+            if (!_isDisposed)
             {
-                return;
+                if (disposing)
+                {
+                    _fileCache.Clear();
+                }
+
+                _isDisposed = true;
             }
-            _semaphore.Dispose();
-            _settingsFiles.Clear();
-
-            GC.SuppressFinalize(this);
-
-            _isDisposed = true;
         }
     }
 }
