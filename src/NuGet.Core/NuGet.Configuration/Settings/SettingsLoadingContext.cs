@@ -34,7 +34,6 @@ namespace NuGet.Configuration
             }
 
             _semaphore.Wait();
-            Lazy<SettingsFile> settingsFile = null;
 
             try
             {
@@ -47,15 +46,19 @@ namespace NuGet.Configuration
                 }
 
                 var file = new FileInfo(filePath);
-                settingsFile = new Lazy<SettingsFile>(() => new SettingsFile(file.DirectoryName, file.Name, isMachineWide, isReadOnly));
+
+                var settingsFile = new Lazy<SettingsFile>(() => new SettingsFile(file.DirectoryName, file.Name, isMachineWide, isReadOnly));
+
+                SettingsFile result = settingsFile.Value;
+
                 _settingsFiles.Add(settingsFile);
+
+                return result;
             }
             finally
             {
                 _semaphore.Release();
             }
-
-            return settingsFile?.Value;
         }
 
         public void Dispose()
