@@ -37,11 +37,7 @@ namespace NuGet.Common
         /// <inheritdoc cref="IEqualityComparer{T}.GetHashCode(T)" />
         public override int GetHashCode(FileSystemInfo obj)
         {
-#if NETFRAMEWORK || NETSTANDARD
-            return obj.FullName.GetHashCode();
-#else
-            return obj.FullName.GetHashCode(StringComparison.Ordinal);
-#endif
+            return PathUtility.GetStringComparerBasedOnOS().GetHashCode(obj.FullName);
         }
     }
 }
