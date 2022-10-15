@@ -164,8 +164,8 @@ namespace NuGet.CommandLine.XPlat
 
             // if there is any error then return failure code.
             int exitCode = (
-                listPackageArgs.Renderer.GetProblems(ProblemType.Error).Any()
-                || listPackageReportModel.Projects.Where(p => p.ProjectProblems != null).SelectMany(p => p.ProjectProblems).Where(p => p.ProblemType == ProblemType.Error).Any())
+                listPackageArgs.Renderer.GetProblems().Any(p => p.ProblemType == ProblemType.Error)
+                || listPackageReportModel.Projects.Where(p => p.ProjectProblems != null).SelectMany(p => p.ProjectProblems).Any(p => p.ProblemType == ProblemType.Error))
                 ? GenericFailureExitCode : GenericSuccessExitCode;
 
             return (exitCode, listPackageReportModel);

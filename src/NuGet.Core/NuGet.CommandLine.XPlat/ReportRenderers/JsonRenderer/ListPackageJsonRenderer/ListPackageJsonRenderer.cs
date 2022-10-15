@@ -22,9 +22,9 @@ namespace NuGet.CommandLine.XPlat
             _problems.Add(new ReportProblem(string.Empty, errorText, problemType));
         }
 
-        public IEnumerable<ReportProblem> GetProblems(ProblemType problemType)
+        public IEnumerable<ReportProblem> GetProblems()
         {
-            return _problems.Where(p => p.ProblemType == problemType);
+            return _problems;
         }
 
         public void End(ListPackageReportModel listPackageReportModel)

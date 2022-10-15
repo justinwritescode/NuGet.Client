@@ -3,11 +3,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using Microsoft.Build.Evaluation;
 using NuGet.CommandLine.XPlat.Utility;
-using NuGet.Configuration;
 using NuGet.ProjectModel;
 
 namespace NuGet.CommandLine.XPlat
@@ -43,7 +41,7 @@ namespace NuGet.CommandLine.XPlat
 
         internal void AddProjectProblem(string error, ProblemType problemType)
         {
-            ProjectProblems ??= new List<ReportProblem> { };
+            ProjectProblems ??= new();
             ProjectProblems.Add(new ReportProblem(project: ProjectPath, message: error, problemType: problemType));
         }
 

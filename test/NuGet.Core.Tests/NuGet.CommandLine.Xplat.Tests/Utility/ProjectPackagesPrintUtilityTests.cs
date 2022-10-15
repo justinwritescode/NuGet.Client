@@ -144,28 +144,28 @@ namespace NuGet.CommandLine.Xplat.Tests.Utility
         private static ListPackageArgs StandardListReportArgs => StandardListReportArgsCache ?? (StandardListReportArgsCache =
             new ListPackageArgs(
                         path: string.Empty, packageSources: Enumerable.Empty<PackageSource>(), frameworks: Enumerable.Empty<string>(),
-                        ReportType.Default, ListPackageConsoleRenderer.Instance, includeTransitive: false,
+                        ReportType.Default, ListPackageConsoleRenderer.GetInstance(), includeTransitive: false,
                         prerelease: false, highestPatch: false, highestMinor: false, logger: new Mock<ILogger>().Object, cancellationToken: CancellationToken.None));
 
         private static ListPackageArgs OutdatedReportArgsCache;
         private static ListPackageArgs OutdatedReportArgs => OutdatedReportArgsCache ?? (OutdatedReportArgsCache =
             new ListPackageArgs(
                         path: string.Empty, packageSources: Enumerable.Empty<PackageSource>(), frameworks: Enumerable.Empty<string>(),
-                        ReportType.Outdated, ListPackageConsoleRenderer.Instance, includeTransitive: false,
+                        ReportType.Outdated, ListPackageConsoleRenderer.GetInstance(), includeTransitive: false,
                         prerelease: false, highestPatch: false, highestMinor: false, logger: new Mock<ILogger>().Object, cancellationToken: CancellationToken.None));
 
         private static ListPackageArgs DeprecatedReportArgsCache;
         private static ListPackageArgs DeprecatedReportArgs => DeprecatedReportArgsCache ?? (DeprecatedReportArgsCache =
             new ListPackageArgs(
                         path: string.Empty, packageSources: Enumerable.Empty<PackageSource>(), frameworks: Enumerable.Empty<string>(),
-                        ReportType.Deprecated, ListPackageConsoleRenderer.Instance, includeTransitive: false,
+                        ReportType.Deprecated, ListPackageConsoleRenderer.GetInstance(), includeTransitive: false,
                         prerelease: false, highestPatch: false, highestMinor: false, logger: new Mock<ILogger>().Object, cancellationToken: CancellationToken.None));
 
         private static ListPackageArgs VulnerableReportArgsCache;
         private static ListPackageArgs VulnerableReportArgs => VulnerableReportArgsCache ?? (VulnerableReportArgsCache =
             new ListPackageArgs(
                         path: string.Empty, packageSources: Enumerable.Empty<PackageSource>(), frameworks: Enumerable.Empty<string>(),
-                        ReportType.Vulnerable, ListPackageConsoleRenderer.Instance, includeTransitive: false,
+                        ReportType.Vulnerable, ListPackageConsoleRenderer.GetInstance(), includeTransitive: false,
                         prerelease: false, highestPatch: false, highestMinor: false, logger: new Mock<ILogger>().Object, cancellationToken: CancellationToken.None));
 
         private static InstalledPackageReference StandardPackageCache;

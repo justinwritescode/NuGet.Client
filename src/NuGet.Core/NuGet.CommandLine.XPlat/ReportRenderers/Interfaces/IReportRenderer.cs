@@ -8,7 +8,7 @@ namespace NuGet.CommandLine.XPlat
     internal interface IReportRenderer
     {
         void AddProblem(string errorText, ProblemType problemType);
-        IEnumerable<ReportProblem> GetProblems(ProblemType problemType);
+        IEnumerable<ReportProblem> GetProblems();
         void End(ListPackageReportModel reportProject);
     }
 }

@@ -188,7 +188,7 @@ namespace NuGet.CommandLine.XPlat
 
             if (outputFormat == ReportOutputFormat.Console)
             {
-                return ListPackageConsoleRenderer.Instance;
+                return ListPackageConsoleRenderer.GetInstance();
             }
 
             // currently only version 1 is available, so default to latest available version 1.
@@ -198,12 +198,12 @@ namespace NuGet.CommandLine.XPlat
             // If customer pass unsupported version then default to latest available version and error about unsupported version.
             if (!string.IsNullOrEmpty(outputVersionOption) && !currentlySupportedReportVersions.Contains(outputVersionOption))
             {
-                jsonReportRenderer = ListPackageJsonRendererV1.Instance;
+                jsonReportRenderer = ListPackageJsonRendererV1.GetInstance();
                 jsonReportRenderer.AddProblem(errorText: string.Format(Strings.ListPkg_InvalidOutputVersion, outputVersionOption, currentlySupportedReportVersions), ProblemType.Information);
             }
             else
             {
-                jsonReportRenderer = ListPackageJsonRendererV1.Instance;
+                jsonReportRenderer = ListPackageJsonRendererV1.GetInstance();
             }
 
             return jsonReportRenderer;
